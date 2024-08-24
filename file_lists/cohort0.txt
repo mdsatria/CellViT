@@ -1,0 +1,1 @@
+file_name_wsi_without_ext
