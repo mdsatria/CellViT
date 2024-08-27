@@ -52,3 +52,8 @@ results/
 # other
 .DS_Store
 Orig-Metrics
+
+
+
+# server branch
+checkpoints/
