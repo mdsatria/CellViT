@@ -249,6 +249,7 @@ class CellSegmentationInference:
         overlap: int = 64,
         batch_size: int = 8,
         geojson: bool = False,
+        to_pt: bool = False
     ) -> None:
         """Process WSI file
 
@@ -462,17 +463,17 @@ class CellSegmentationInference:
             geojson_list = self.convert_geojson(cell_dict_wsi["cells"], False)
             with open(str(str(outdir / "cell_detection.geojson")), "w") as outfile:
                 ujson.dump(geojson_list, outfile, indent=2)
-
-        self.logger.info(
-            f"Create cell graph with embeddings and save it under: {str(outdir / 'cells.pt')}"
-        )
-        graph = CellGraphDataWSI(
-            x=torch.stack(graph_data["cell_tokens"]),
-            positions=torch.stack(graph_data["positions"]),
-            contours=graph_data["contours"],
-            metadata=graph_data["metadata"],
-        )
-        torch.save(graph, outdir / "cells.pt")
+        if to_pt:
+            self.logger.info(
+                f"Create cell graph with embeddings and save it under: {str(outdir / 'cells.pt')}"
+            )
+            graph = CellGraphDataWSI(
+                x=torch.stack(graph_data["cell_tokens"]),
+                positions=torch.stack(graph_data["positions"]),
+                contours=graph_data["contours"],
+                metadata=graph_data["metadata"],
+            )
+            torch.save(graph, outdir / "cells.pt")
 
         cell_stats_df = pd.DataFrame(cell_dict_wsi["cells"])
         cell_stats = dict(cell_stats_df.value_counts("type"))
